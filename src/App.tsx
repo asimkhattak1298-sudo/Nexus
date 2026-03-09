@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, FormEvent } from 'react';
 
-const API_KEY = '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';
+// Use environment variable for API key
+const API_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || '';
 
 const MODELS = [
   { id: 'arcee-ai/trinity-large-preview:free', name: 'Arcee Trinity Large' },
@@ -196,6 +197,15 @@ function ChatPage() {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
+    // Check if API key is configured
+    if (!API_KEY) {
+      setMessages(prev => [...prev, { 
+        role: 'assistant', 
+        content: 'Error: OpenRouter API key is not configured. Please add VITE_OPENROUTER_API_KEY to your .env file.' 
+      }]);
+      return;
+    }
+
     const userMessage: Message = { role: 'user', content: trimmed };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
@@ -378,4 +388,5 @@ export default function App() {
   }
 
   return <ChatPage />;
-}
+        }
+          
